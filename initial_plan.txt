@@ -1,0 +1,313 @@
+=============================================================================
+                    INSULIN SPIKE MANAGEMENT CHATBOT
+                           INITIAL PROJECT PLAN
+=============================================================================
+
+PROJECT OVERVIEW
+----------------
+A chatbot that helps health-conscious users understand the insulin spike 
+potential of their food through image recognition, Glycemic Index (GI) data,
+and Glycemic Load (GL) calculations.
+
+TARGET AUDIENCE
+---------------
+- Non-diabetic individuals
+- People without insulin resistance
+- Weight loss seekers
+- Weight maintenance enthusiasts
+- Fitness-conscious individuals
+- Health-focused eaters
+
+=============================================================================
+                              CORE FEATURES
+=============================================================================
+
+1. FOOD IMAGE RECOGNITION
+   - User uploads/captures food image
+   - AI-powered food identification
+   - Multi-food detection in single image
+   - Portion size estimation
+
+2. GLYCEMIC INDEX (GI) DATABASE
+   - Integrate credible GI data sources:
+     * Harvard Health GI Database
+     * University of Sydney GI Database
+     * USDA Food Composition Database
+   - Cover common foods and ingredients
+   - Regular database updates
+
+3. GLYCEMIC LOAD (GL) CALCULATION
+   Base Formula: GL = (GI × Carbohydrate content per serving) / 100
+   
+   Base GL Classification:
+   - Low GL: 10 or less
+   - Medium GL: 11-19
+   - High GL: 20 or more
+
+4. MACRONUTRIENT ANALYSIS
+   The chatbot analyzes complete nutritional profile per serving:
+   
+   - CARBOHYDRATES (g): Primary driver of insulin response
+   - PROTEIN (g): Slows gastric emptying, reduces spike
+   - FAT (g): Delays carbohydrate absorption
+   - FIBER (g): Reduces net carbs, slows digestion
+   
+   Data Sources for Macronutrients:
+   - USDA FoodData Central
+   - Nutritionix API
+   - AI-powered estimation from food image
+
+5. EFFECTIVE GLYCEMIC LOAD (eGL) - ADJUSTED INSULIN SPIKE SCORE
+   
+   After calculating base GL, apply modifiers based on macronutrients:
+   
+   STEP 1: Calculate Base GL
+   Base GL = (GI × Carbohydrates) / 100
+   
+   STEP 2: Apply Macronutrient Modifiers
+   
+   Fiber Modifier:
+   - Net Carbs = Total Carbs - Fiber (if fiber > 0)
+   - High fiber (>5g) reduces effective GL by ~15-20%
+   
+   Protein Modifier:
+   - Low protein (<5g): No adjustment
+   - Moderate protein (5-15g): Reduces eGL by ~10%
+   - High protein (>15g): Reduces eGL by ~20%
+   
+   Fat Modifier:
+   - Low fat (<5g): No adjustment
+   - Moderate fat (5-15g): Reduces eGL by ~10%
+   - High fat (>15g): Reduces eGL by ~15%
+   
+   STEP 3: Calculate Effective GL (eGL)
+   eGL = Base GL × (1 - Fiber_Modifier) × (1 - Protein_Modifier) × (1 - Fat_Modifier)
+   
+   Example Calculation:
+   ┌─────────────────────────────────────────────────────────────┐
+   │ Food: Brown Rice with Grilled Chicken & Vegetables         │
+   │                                                             │
+   │ Nutritional Profile (per serving):                         │
+   │ - Carbohydrates: 45g                                        │
+   │ - Fiber: 4g                                                 │
+   │ - Protein: 25g (High → 20% reduction)                      │
+   │ - Fat: 8g (Moderate → 10% reduction)                       │
+   │ - GI of Brown Rice: 50                                      │
+   │                                                             │
+   │ Calculation:                                                │
+   │ 1. Net Carbs = 45 - 4 = 41g                                │
+   │ 2. Base GL = (50 × 41) / 100 = 20.5                        │
+   │ 3. eGL = 20.5 × 0.80 × 0.90 = 14.76                        │
+   │                                                             │
+   │ Result: Medium Effective GL (was High before adjustment)   │
+   └─────────────────────────────────────────────────────────────┘
+
+6. INSULIN SPIKE CLASSIFICATION (Based on eGL)
+   
+   Final classification uses Effective GL (eGL):
+   
+   ┌────────────────┬─────────────┬─────────────────────────────┐
+   │ eGL Range      │ Spike Level │ Guidance                    │
+   ├────────────────┼─────────────┼─────────────────────────────┤
+   │ 0 - 10         │ LOW         │ ✅ Safe to eat freely       │
+   │ 11 - 19        │ MODERATE    │ ⚠️ Eat in moderation        │
+   │ 20+            │ HIGH        │ ❌ Limit or mitigate        │
+   └────────────────┴─────────────┴─────────────────────────────┘
+   
+   Additional Factors Displayed:
+   - Protein-to-Carb ratio assessment
+   - Fiber adequacy indicator
+   - Fat quality notes (saturated vs unsaturated)
+
+7. SMART RECOMMENDATIONS ENGINE
+   - Eat or avoid guidance based on eGL
+   - Portion size suggestions
+   - Food pairing recommendations (fiber, protein, fat combinations)
+   - Meal timing advice
+   - Alternative food suggestions
+   - Macronutrient balance tips
+   - "Add protein/fiber/fat" suggestions to reduce spike
+
+8. CLEAR RESULT EXPLANATION
+   - Visual indicators (color-coded: green/yellow/red)
+   - Simple language explanations
+   - Show breakdown: Base GL → eGL with modifiers explained
+   - Educational content about why certain foods spike insulin
+   - Show how protein/fat/fiber in the meal helped (or could help)
+   - Tips to reduce insulin response
+
+=============================================================================
+                           TECHNICAL ARCHITECTURE
+=============================================================================
+
+FRONTEND
+--------
+- Framework: React.js with TypeScript
+- UI Library: Tailwind CSS for styling
+- Camera Integration: Browser camera API for food capture
+- Image Upload: Drag-and-drop + file picker
+- Responsive Design: Mobile-first approach
+
+BACKEND
+-------
+- Framework: Python FastAPI
+- Image Recognition: OpenAI Vision API or Google Cloud Vision
+- LLM Integration: OpenAI GPT-4 for conversational responses
+- Database: PostgreSQL for GI/GL data storage
+- Caching: Redis for frequent queries
+
+DATA LAYER
+----------
+- GI Database: Curated from credible sources
+- Macronutrient Database: Comprehensive nutrition data
+  * Carbohydrates per 100g
+  * Protein per 100g
+  * Fat per 100g (with saturated/unsaturated breakdown)
+  * Fiber per 100g
+  * Standard serving sizes
+- Food recognition mapping
+- User session management (optional)
+
+=============================================================================
+                              USER FLOW
+=============================================================================
+
+1. User opens chatbot interface
+2. User captures/uploads food image
+3. System identifies food items in image
+4. System estimates portion sizes
+5. System retrieves nutritional data:
+   - GI values for identified foods
+   - Carbohydrate content
+   - Protein content
+   - Fat content
+   - Fiber content
+6. System calculates Base GL
+7. System applies macronutrient modifiers (protein, fat, fiber)
+8. System calculates Effective GL (eGL)
+9. System classifies insulin spike potential based on eGL
+10. System generates personalized recommendations
+11. System presents clear, educational results showing:
+    - Food identified
+    - Nutritional breakdown
+    - Base GL vs Effective GL
+    - Why the spike level is what it is
+    - What can be done to improve it
+12. User can ask follow-up questions
+
+=============================================================================
+                         RECOMMENDATION STRATEGIES
+=============================================================================
+
+FOR HIGH GL FOODS:
+- Add fiber-rich vegetables before/with the meal
+- Include protein source to slow digestion
+- Add healthy fats (olive oil, avocado, nuts)
+- Reduce portion size
+- Suggest lower GL alternatives
+- Recommend physical activity after meal
+
+FOR MODERATE GL FOODS:
+- Pair with protein or healthy fats
+- Watch portion sizes
+- Consider meal timing
+
+FOR LOW GL FOODS:
+- Safe to consume
+- Explain why they're good choices
+- Suggest incorporating more into diet
+
+=============================================================================
+                          DEVELOPMENT PHASES
+=============================================================================
+
+PHASE 1: MVP (Minimum Viable Product)
+--------------------------------------
+Week 1-2:
+- Set up project structure
+- Build basic frontend UI
+- Create image upload functionality
+- Integrate food recognition API
+
+Week 3-4:
+- Build GI/GL database from credible sources
+- Build macronutrient database (carbs, protein, fat, fiber)
+- Implement Base GL calculation logic
+- Implement macronutrient modifier logic
+- Implement Effective GL (eGL) calculation
+- Create classification system based on eGL
+- Basic recommendation engine with macro-aware suggestions
+
+Week 5-6:
+- Connect frontend to backend
+- Implement chat interface
+- Add result visualization
+- Testing and bug fixes
+
+PHASE 2: ENHANCEMENT
+--------------------
+- Improve food recognition accuracy
+- Expand GI database
+- Add meal history tracking
+- Personalized recommendations
+- Multi-language support
+
+PHASE 3: ADVANCED FEATURES
+--------------------------
+- Meal planning suggestions
+- Recipe GL calculator
+- Progress tracking
+- Community features
+- Integration with fitness apps
+
+=============================================================================
+                           DATA SOURCES
+=============================================================================
+
+Primary GI Sources:
+1. University of Sydney GI Database (glycemicindex.com)
+2. Harvard Health Publications
+3. American Diabetes Association
+4. USDA FoodData Central
+
+Macronutrient Data Sources:
+1. USDA FoodData Central (primary - comprehensive nutrition data)
+2. Nutritionix API (commercial, extensive database)
+3. Open Food Facts (open-source, community-driven)
+4. MyFitnessPal Database (via API if available)
+
+Food Recognition:
+1. OpenAI Vision API (GPT-4 Vision)
+2. Google Cloud Vision API
+3. Custom trained models (future)
+
+=============================================================================
+                         SUCCESS METRICS
+=============================================================================
+
+- Food recognition accuracy: >85%
+- Macronutrient estimation accuracy: >80%
+- eGL calculation reliability: Validated against research
+- User satisfaction score: >4/5
+- Response time: <3 seconds
+- Database coverage: >5000 foods with full macro data
+- Clear explanation rating: >4/5
+
+=============================================================================
+                              NEXT STEPS
+=============================================================================
+
+1. [ ] Set up development environment
+2. [ ] Design UI/UX mockups
+3. [ ] Create database schema for GI + macronutrient data
+4. [ ] Research and collect GI data from sources
+5. [ ] Collect macronutrient data (carbs, protein, fat, fiber)
+6. [ ] Define and validate eGL calculation formula
+7. [ ] Set up API integrations (Vision, Nutrition APIs)
+8. [ ] Build frontend components
+9. [ ] Implement backend logic (GL + eGL calculations)
+10. [ ] Testing and iteration
+11. [ ] Deploy MVP
+
+=============================================================================
+

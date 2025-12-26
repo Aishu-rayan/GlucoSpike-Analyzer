@@ -1,0 +1,7 @@
+I want to develop a chatbot that measures the entend to which the food they eat can lead to insulin spike
+This is not one fit size for all as those who have diabetes and high insulin resistance will have different insulin spikes
+My target audience are people who do not have diabetes or insulin resistance in general and are on the path to weight loss or want to maintain their weight and health or fitness conscious people who to stay fit and eat healthy food
+Leverage GI table available online, any credible source and then caculate the GL that will give us the possible insulin spike
+It should then rightly classify the insulin spike and give recommendations to the user. If they should eat it or not and how to eat the food to ensure there is no high insulin spike
+The user will click picture of the food and share with the chatbot and based on that it will determine
+It should clearly explain the user the result
