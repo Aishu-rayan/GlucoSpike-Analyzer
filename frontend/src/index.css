@@ -1,0 +1,135 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-primary: #0f1410;
+  --bg-secondary: #1a1f1b;
+  --bg-tertiary: #242a25;
+  --text-primary: #f0f4e8;
+  --text-secondary: #a5b396;
+  --accent-sage: #849574;
+  --accent-coral: #f76545;
+  --accent-honey: #fbbf24;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Outfit', system-ui, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent-sage);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, #849574 0%, #fbbf24 50%, #f76545 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glass effect */
+.glass {
+  background: rgba(26, 31, 27, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(132, 149, 116, 0.2);
+}
+
+/* Glow effects */
+.glow-sage {
+  box-shadow: 0 0 40px rgba(132, 149, 116, 0.3);
+}
+
+.glow-coral {
+  box-shadow: 0 0 40px rgba(247, 101, 69, 0.3);
+}
+
+.glow-honey {
+  box-shadow: 0 0 40px rgba(251, 191, 36, 0.3);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+/* Spike level colors */
+.spike-low {
+  color: #849574;
+  background: rgba(132, 149, 116, 0.15);
+  border-color: rgba(132, 149, 116, 0.4);
+}
+
+.spike-moderate {
+  color: #fbbf24;
+  background: rgba(251, 191, 36, 0.15);
+  border-color: rgba(251, 191, 36, 0.4);
+}
+
+.spike-high {
+  color: #f76545;
+  background: rgba(247, 101, 69, 0.15);
+  border-color: rgba(247, 101, 69, 0.4);
+}
+
+/* Markdown-like formatting in chat */
+.chat-content strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.chat-content em {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Loading pulse */
+@keyframes loadingPulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+.loading-dot {
+  animation: loadingPulse 1.4s ease-in-out infinite;
+}
+
+.loading-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.loading-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
