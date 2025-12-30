@@ -1,0 +1,8 @@
+I want to create an history of previous chats at the side of the chat screen that saves the prior prompts and images uploaded by the user so that they can reference it back whenever they want
+I want to expand the GI database. Search whihc source data has the most expansive and inclusive database for all foods - meat, fruits, vegetables, grains, cereals, pulses, roots, seeds and popular dishes. You can also combine multiple GI databases from reliable and credible sources like University of Sydney and any other credible sources.
+Use perplexity mcp or web search tool for doing this research
+Use this - https://glycemicindex.com/gi-search/
+This is the API key for US department of Agriculture - 6iX9Wx9gJXL1QSzLhfdhIkGE4bDK3lfwWgvL50RS
+https://fdc.nal.usda.gov/
+This is the API guide link - https://fdc.nal.usda.gov/api-guide#bkmk-1
+Next lets create a customization for those who have diabetes type 1, 2

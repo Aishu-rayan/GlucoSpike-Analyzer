@@ -1,0 +1,74 @@
+Please create a user profile at th beginning to determine if they have insulin resistance/ have diabetes or not. If they have insulin resistance then the the chatbot should recommend for them differently when compared to those who do not have any of these conditions or suffer from insulin resistance
+User Profile Details to Collect
+To create an effective and personalized glucose spike analyzer chatbot, you should collect a comprehensive user profile during initial registration or onboarding. This ensures the recommendations are tailored to individual health factors that influence blood sugar responses. Start with a simple, step-by-step questionnaire in the chatbot interface (e.g., via forms or conversational prompts in Cursor Pro). Validate inputs for accuracy (e.g., age as a number, durations in years/months).
+Here's a list of essential details to collect:
+
+Basic Demographics:
+Name (for personalization, e.g., "Hi [Name], here's your recommendation").
+Age (insulin sensitivity decreases with age; e.g., older adults may have slower metabolism).
+Gender (biological sex affects hormone levels; e.g., women may experience fluctuations due to menstrual cycles or menopause).
+Height and Weight (to calculate BMI, which correlates with insulin resistance risk).
+
+Diabetes/Insulin Resistance Status:
+Whether they have diabetes (yes/no).
+Type of diabetes if applicable (e.g., Type 1, Type 2, gestational, or prediabetes).
+Whether they have insulin resistance (yes/no; note that Type 2 diabetes often involves insulin resistance).
+Duration of the condition (e.g., "How many years/months have you had diabetes or insulin resistance?"). This helps gauge progression and potential complications like neuropathy.
+
+Medical and Health History:
+Current blood sugar metrics: Fasting blood glucose level, HbA1c (A1C) percentage (indicates average blood sugar over 2-3 months), and any recent post-meal spikes if known.
+Medications and treatments: List of diabetes-related meds (e.g., metformin, insulin, GLP-1 agonists like Ozempic), as they affect insulin response and spike potential.
+Other conditions affecting insulin spikes (see below for a detailed list; ask via checkboxes or multi-select for common ones).
+Allergies or intolerances: Food allergies (e.g., nuts, dairy) to avoid unsafe recommendations.
+Dietary preferences: Vegetarian, vegan, keto, etc., to align suggestions with user habits.
+
+Lifestyle Factors:
+Physical activity level (e.g., sedentary, moderate, active; exercise improves insulin sensitivity and reduces spikes).
+Sleep patterns (e.g., average hours per night; poor sleep can worsen insulin resistance).
+Stress levels (e.g., on a scale of 1-10; chronic stress raises cortisol, which spikes blood sugar).
+Smoking or alcohol use (both can impair insulin function).
+
+Monitoring and Goals:
+Personal goals: e.g., weight loss, better energy, stable blood sugar (to prioritize recommendations).
+Other Conditions Affecting Insulin Spikes
+Beyond diabetes and insulin resistance, several factors can influence how the body handles blood sugar. You should ask about these in the profile to adjust GL calculations and recommendations (e.g., via risk multipliers or flagged warnings). Here's a key list:
+
+Hormonal Disorders: Polycystic Ovary Syndrome (PCOS) – common in women, increases insulin resistance. Hypothyroidism or hyperthyroidism – thyroid hormones regulate metabolism and can cause spikes or lows.
+Medications: Steroids (e.g., prednisone), beta-blockers, or antipsychotics can raise blood sugar. Birth control pills or hormone replacement therapy may affect women.
+Gastrointestinal Issues: Gastroparesis (delayed stomach emptying, common in diabetics) slows digestion, altering spike timing. Celiac disease or IBS can affect nutrient absorption.
+Kidney or Liver Conditions: Chronic kidney disease or fatty liver disease impairs glucose processing.
+Inflammatory or Autoimmune Diseases: Rheumatoid arthritis or lupus – inflammation raises cortisol and blood sugar.
+Pregnancy: Gestational diabetes or general hormonal shifts increase spike risk.
+Age-Related Factors: Menopause (estrogen drop reduces insulin sensitivity) or andropause in men.
+Genetic Factors: Family history of diabetes (ask for it) indicates higher predisposition.
+Infections or Illness: Acute illnesses (e.g., flu) temporarily spike blood sugar due to stress hormones.
+Nutritional Deficiencies: Low vitamin D, magnesium, or chromium can worsen insulin function.
+
+If any are present, the chatbot should flag them (e.g., "Based on your PCOS, we recommend extra fiber to mitigate spikes") and suggest consulting a doctor.
+
+Assessing Ability to Raise Sugar Spikes (Personalized for IR/Diabetes)
+GL alone isn't enough; spikes depend on meal composition, user factors, and timing. For IR/diabetic users, emphasize mitigation to avoid hyperglycemia. Calculate a "Spike Risk Score" (0-100) that modifies GL based on profile data.
+
+Factors to Incorporate:
+For standard GL calculation use the formula and methodology you are currently using, in case the user has any conditions that could lead to IR then follow the below user specific adjustments
+User-Specific Adjustments:
+For IR: Multiply GL by a sensitivity factor (e.g., +20% if BMI >30 or A1C >6.5%, as resistance amplifies spikes).
+For Diabetes: Further adjust by type – Type 1: Focus on bolus insulin needs; Type 2: Similar to IR but add warnings for complications.
+Duration: Longer duration (>5 years) may mean +10-15% risk due to beta-cell fatigue.
+Other Conditions: E.g., PCOS or hypothyroidism: +15% risk; medications like metformin: -10% (it improves sensitivity).
+Age/Activity: Older/sedentary: +10%; active: -15%.
+
+Food/Meal Composition:
+Fiber/Protein/Fat Content: These slow absorption. Reduce effective GL by 10-30% if meal includes >5g fiber, >10g protein, or >5g healthy fats (e.g., add nuts to fruit).
+Order of Consumption: Eating protein/fat/fiber first reduces spikes by 30-50% (e.g., veggies before carbs).
+Additions: Suggest pairings like vinegar (reduces GI by 20%), cinnamon, or exercise post-meal.
+
+Portion and Timing: Larger portions scale GL linearly; evening meals may spike more due to lower sensitivity.
+
+Spike Risk Score Formula (Example Implementation):
+Base: Adjusted GL = GL × (1 + IR/Diabetes Modifier + Condition Modifiers)
+Spike Risk = Adjusted GL × (1 - Mitigation Factor) × Portion Multiplier
+Mitigation Factor: 0.1-0.5 based on added elements (e.g., +fiber = 0.2 reduction).
+Portion Multiplier: 1 for standard; >1 for oversized.
+
+Thresholds: Low Risk (<20: "Safe to eat"), Medium (20-40: "Eat with caution"), High (>40: "Avoid or modify").
