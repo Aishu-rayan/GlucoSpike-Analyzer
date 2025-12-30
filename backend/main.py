@@ -3,16 +3,19 @@ GlucoGuide API - Insulin Spike Management Chatbot Backend
 
 A FastAPI application that helps users understand the insulin spike 
 potential of their food through image recognition and GL calculations.
+Now with user accounts, chat history, and personalized recommendations.
 """
 
 import os
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, UploadFile, File, HTTPException, Form
+from fastapi import FastAPI, UploadFile, File, HTTPException, Form, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from database.gi_database import get_food_data, search_foods, get_all_foods, FOOD_DATABASE
+from database.gi_database import get_food_data, search_foods, FOOD_DATABASE
 from services.egl_calculator import calculate_egl, calculate_meal_egl, NutritionInfo
 from services.food_analyzer import analyze_food_image, generate_chat_response
 from models.schemas import (
@@ -20,16 +23,38 @@ from models.schemas import (
     ChatRequest, ChatResponse, AnalyzeRequest, FoodSearchResponse,
     SpikeLevel, FoodItem
 )
+from db.engine import init_db, get_db
+from db.models import User, Profile
+from routes.auth import router as auth_router, get_current_user, get_current_user_optional
+from routes.chats import router as chats_router
+from routes.profile import router as profile_router
+from routes.usda import router as usda_router
 
 # Load environment variables
 load_dotenv()
+
+# Ensure uploads directory exists
+UPLOADS_DIR = os.path.join(os.path.dirname(__file__), "uploads")
+os.makedirs(UPLOADS_DIR, exist_ok=True)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Startup and shutdown events"""
     print("GlucoGuide API starting up...")
-    print(f"Loaded {len(FOOD_DATABASE)} foods in database")
+    
+    # Initialize database
+    await init_db()
+    print("Database initialized")
+    
+    # Seed initial data if needed
+    from db.seed_data import seed_foods_and_gi
+    try:
+        await seed_foods_and_gi()
+    except Exception as e:
+        print(f"Seed data skipped or failed: {e}")
+    
+    print(f"Loaded {len(FOOD_DATABASE)} foods in memory database")
     yield
     print("GlucoGuide API shutting down...")
 
@@ -38,7 +63,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="GlucoGuide API",
     description="Insulin Spike Management Chatbot - Analyze food and understand glycemic impact",
-    version="1.0.0",
+    version="2.0.0",
     lifespan=lifespan
 )
 
@@ -51,6 +76,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Include routers
+app.include_router(auth_router)
+app.include_router(chats_router)
+app.include_router(profile_router)
+app.include_router(usda_router)
+
 
 # ============================================================================
 # Health Check
@@ -62,8 +93,9 @@ async def root():
     return {
         "status": "healthy",
         "app": "GlucoGuide API",
-        "version": "1.0.0",
-        "message": "Welcome to GlucoGuide! Upload a food image or search for foods to analyze insulin spike potential."
+        "version": "2.0.0",
+        "message": "Welcome to GlucoGuide! Upload a food image or search for foods to analyze insulin spike potential.",
+        "features": ["user_accounts", "chat_history", "personalized_recommendations"]
     }
 
 
@@ -78,18 +110,25 @@ async def health_check():
         },
         "openai": {
             "status": "configured" if os.getenv("OPENAI_API_KEY") else "not_configured"
+        },
+        "features": {
+            "authentication": True,
+            "chat_history": True,
+            "user_profiles": True,
         }
     }
 
 
 # ============================================================================
-# Food Analysis Endpoints
+# Food Analysis Endpoints (now with optional auth for personalization)
 # ============================================================================
 
 @app.post("/api/analyze/image", response_model=ChatResponse)
 async def analyze_image(
     file: UploadFile = File(...),
-    message: str = Form(default="Analyze this food")
+    message: str = Form(default="Analyze this food"),
+    current_user: User = Depends(get_current_user_optional),
+    db: AsyncSession = Depends(get_db),
 ):
     """
     Analyze a food image and calculate eGL.
@@ -97,7 +136,7 @@ async def analyze_image(
     - Identifies foods in the image using AI
     - Looks up nutritional data
     - Calculates effective glycemic load
-    - Provides recommendations
+    - Provides recommendations (personalized if logged in)
     """
     # Validate file type
     if not file.content_type or not file.content_type.startswith("image/"):
@@ -195,7 +234,10 @@ async def analyze_image(
 
 
 @app.post("/api/analyze/food", response_model=EGLResponse)
-async def analyze_food_by_name(request: AnalyzeRequest):
+async def analyze_food_by_name(
+    request: AnalyzeRequest,
+    current_user: User = Depends(get_current_user_optional),
+):
     """
     Analyze a food by name (without image).
     
@@ -303,13 +345,14 @@ async def list_categories():
 
 
 # ============================================================================
-# Chat Endpoint
+# Chat Endpoint (legacy - still works without auth)
 # ============================================================================
 
 @app.post("/api/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
     """
     General chat endpoint for questions about nutrition and insulin.
+    For persistent chat history, use /api/chats endpoints instead.
     """
     response = generate_chat_response(request.message)
     
@@ -327,6 +370,7 @@ async def chat(request: ChatRequest):
 @app.exception_handler(Exception)
 async def global_exception_handler(request, exc):
     """Global exception handler"""
+    print(f"Unhandled error: {exc}")
     return JSONResponse(
         status_code=500,
         content={
@@ -339,4 +383,3 @@ async def global_exception_handler(request, exc):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
-
