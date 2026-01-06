@@ -11,14 +11,14 @@ import json
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, UploadFile, File, HTTPException, Form, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from dotenv import load_dotenv
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from database.gi_database import get_food_data, search_foods, FOOD_DATABASE
 from services.egl_calculator import calculate_egl, calculate_meal_egl, NutritionInfo
-from services.food_analyzer import analyze_food_image, generate_chat_response, generate_chat_response_stream
+from services.food_analyzer import analyze_food_image, generate_chat_response
 from models.schemas import (
     FoodAnalysisResponse, EGLResponse, NutritionBreakdown,
     ChatRequest, ChatResponse, AnalyzeRequest, FoodSearchResponse,
@@ -367,21 +367,6 @@ async def chat(request: ChatRequest):
         food_analysis=None,
         egl_result=None
     )
-
-
-@app.post("/api/chat/stream")
-async def chat_stream(request: ChatRequest):
-    """Stream chat response text as it is generated."""
-
-    def gen():
-        try:
-            for chunk in generate_chat_response_stream(request.message):
-                yield chunk
-        except Exception as e:
-            yield f"\n\n[stream_error] {str(e)}"
-
-    return StreamingResponse(gen(), media_type="text/plain; charset=utf-8")
-
 
 # ============================================================================
 # Error Handlers
