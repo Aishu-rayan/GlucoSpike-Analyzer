@@ -51,11 +51,13 @@ export function WelcomeScreen({ onSampleQuery }: WelcomeScreenProps) {
         transition={{ delay: 0.4 }}
         className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-2xl mb-8"
       >
-        <FeatureCard
-          icon={<Upload className="w-5 h-5" />}
-          title="Upload Food Photos"
-          description="AI-powered food recognition"
-        />
+        <label htmlFor="image-upload" className="cursor-pointer">
+          <FeatureCard
+            icon={<Upload className="w-5 h-5" />}
+            title="Upload Food Photos"
+            description="AI-powered food recognition"
+          />
+        </label>
         <FeatureCard
           icon={<Search className="w-5 h-5" />}
           title="Glycemic Analysis"

@@ -32,6 +32,8 @@ from routes.usda import router as usda_router
 
 # Load environment variables
 load_dotenv()
+# Also try loading from the root directory if not found in backend
+load_dotenv(os.path.join(os.path.dirname(__file__), "..", ".env"))
 
 # Ensure uploads directory exists
 UPLOADS_DIR = os.path.join(os.path.dirname(__file__), "uploads")

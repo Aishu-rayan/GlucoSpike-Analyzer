@@ -29,6 +29,31 @@ An AI-powered chatbot that analyzes food images and calculates the Effective Gly
 
 ## 🎯 How It Works
 
+### 📊 The GlucoGuide Analysis Pipeline
+
+```mermaid
+graph TD
+    A[User Input: Image or Text] --> B{AI Food Recognition}
+    B -->|Identified Foods| C[Database Lookup: GI & Nutrition]
+    C --> D[Calculate Base GL]
+    D --> E[Apply Macronutrient Modifiers]
+    E --> F{User Profile?}
+    F -->|Yes| G[Personalized Adjustment]
+    F -->|No| H[Standard Calculation]
+    G --> I[Final eGL & Risk Score]
+    H --> I
+    I --> J[Personalized Tips & Guidance]
+    
+    subgraph "The eGL Formula"
+    D -.-> D1["(GI × Net Carbs) / 100"]
+    E -.-> E1["Reduction for Fiber, Protein, & Fat"]
+    end
+    
+    subgraph "Profile Factors"
+    G -.-> G1["Diabetes Type, IR, BMI, Activity"]
+    end
+```
+
 ### Effective Glycemic Load (eGL) Calculation
 
 1. **Base GL** = (GI × Net Carbs) / 100
@@ -82,8 +107,6 @@ python -m venv venv
 # Activate virtual environment
 # On Windows:
 venv\Scripts\activate
-# On macOS/Linux:
-source venv/bin/activate
 
 # Install dependencies
 pip install -r requirements.txt
