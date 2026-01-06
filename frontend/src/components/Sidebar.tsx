@@ -9,7 +9,6 @@ import {
   Check, 
   X, 
   LogOut, 
-  Settings,
   ChevronLeft,
   ChevronRight,
   User

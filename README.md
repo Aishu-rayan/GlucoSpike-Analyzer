@@ -343,6 +343,18 @@ The risk score considers:
 - Health status, goals, activity level
 - Skip option for immediate access
 
+## 📸 App Screenshots
+
+| Onboarding (Goals) | Onboarding (Health Status) |
+|---|---|
+| ![Onboarding goals](assets/screenshots/onboarding-goals.png) | ![Onboarding health status](assets/screenshots/onboarding-health-status.png) |
+
+| Chat (Analyze Meal) | Result (High Spike) |
+|---|---|
+| ![Chat analyzing meal](assets/screenshots/chat-analyzing-meal.png) | ![High spike result](assets/screenshots/egl-result-high-spike.png) |
+
+![Meal analysis response](assets/screenshots/chat-meal-analysis-response.png)
+
 ## 💻 Development
 
 ### Backend Technologies
