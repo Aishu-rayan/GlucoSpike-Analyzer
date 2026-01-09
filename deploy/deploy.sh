@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 PROJECT_DIR="/home/sreenivasanac/projects/GlucoSpike-Analyzer"
 FRONTEND_DIR="$PROJECT_DIR/frontend"
@@ -12,7 +12,7 @@ echo "=== GlucoGuide Deployment Script ==="
 # Check if .env exists
 if [ ! -f "$DEPLOY_DIR/.env" ]; then
     echo "ERROR: $DEPLOY_DIR/.env not found!"
-    echo "Please copy .env.example to .env and configure your OPENAI_API_KEY"
+    echo "Create $DEPLOY_DIR/.env and set at least OPENAI_API_KEY (and optionally USDA_API_KEY)."
     exit 1
 fi
 
@@ -44,6 +44,7 @@ fi
 
 # Install dependencies
 echo "Installing Python dependencies..."
+./venv/bin/pip install -U pip
 ./venv/bin/pip install -r requirements.txt
 
 # Setup systemd service

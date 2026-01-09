@@ -28,6 +28,10 @@ yarn-error.log*
 build/
 dist/
 
+# Runtime state
+backend/app.db
+backend/app.db-*
+
 # OS / Editor files
 .DS_Store
 Thumbs.db

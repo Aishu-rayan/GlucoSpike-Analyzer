@@ -93,9 +93,10 @@ app.include_router(usda_router)
 # Health Check
 # ============================================================================
 
-@app.get("/")
-async def root():
-    """Health check endpoint"""
+@app.get("/api")
+@app.get("/api/")
+async def api_root():
+    """API root / basic health"""
     return {
         "status": "healthy",
         "app": "GlucoGuide API",
@@ -105,7 +106,7 @@ async def root():
     }
 
 
-@app.get("/health")
+@app.get("/api/health")
 async def health_check():
     """Detailed health check"""
     return {

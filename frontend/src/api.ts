@@ -291,7 +291,7 @@ export async function searchFoods(query: string): Promise<{ results: Array<{ nam
 
 export async function healthCheck(): Promise<boolean> {
   try {
-    const response = await fetch('/health');
+    const response = await fetch(`${API_BASE}/health`);
     return response.ok;
   } catch {
     return false;

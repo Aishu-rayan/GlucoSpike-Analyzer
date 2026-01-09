@@ -89,12 +89,19 @@ source venv/bin/activate
 pip install -r requirements.txt
 
 # Create .env file
-echo OPENAI_API_KEY=your_api_key_here > .env
-echo USDA_API_KEY=your_usda_key_here >> .env
+cp .env.example .env
+# Fill in OPENAI_API_KEY and USDA_API_KEY (secret keys) in backend/.env
 
 # Run the server
 python main.py
 ```
+
+#### Secrets / `.env` locations
+
+- **Local development**: `backend/.env` (loaded by `python-dotenv` when running the backend from `backend/`)
+- **Production (systemd)**: `deploy/.env` (loaded via `EnvironmentFile` in `deploy/glucospike.service`)
+
+Do not commit real secret values.
 
 The API will be available at `http://localhost:8000`
 
@@ -113,6 +120,10 @@ npm run dev
 ```
 
 The app will be available at `http://localhost:5173`
+
+## Deployment
+
+See `deployment.md`.
 
 ## 📁 Project Structure
 
