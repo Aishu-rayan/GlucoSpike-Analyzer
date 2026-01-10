@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { Header, ChatMessage, ChatInput, WelcomeScreen, LoadingMessage, Sidebar } from './components';
 import { Message, ChatMessage as APIChatMessage } from './types';
-import { analyzeImage, chat, getChat, addMessage, uploadImage, getImageUrl } from './api';
+import { analyzeImage, chat, getChat, addMessage, uploadImage, getImageUrl, createChat } from './api';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { Login, Register, Onboarding } from './pages';
 
@@ -14,8 +14,10 @@ function AppContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [currentChatId, setCurrentChatId] = useState<number | null>(null);
+  const [chatListRefreshCounter, setChatListRefreshCounter] = useState(0);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const skipNextChatLoadRef = useRef(false);
   
   // Scroll to bottom when new messages arrive
   useEffect(() => {
@@ -24,9 +26,10 @@ function AppContent() {
 
   // Load chat when selected
   useEffect(() => {
-    if (currentChatId) {
+    if (currentChatId && !skipNextChatLoadRef.current) {
       loadChat(currentChatId);
     }
+    skipNextChatLoadRef.current = false;
   }, [currentChatId]);
 
   const loadChat = async (chatId: number) => {
@@ -49,6 +52,15 @@ function AppContent() {
 
   const handleSendMessage = async (content: string, image?: File) => {
     setError(null);
+    
+    let ensuredChatId = currentChatId;
+    if (!ensuredChatId && isAuthenticated) {
+      const newChat = await createChat();
+      ensuredChatId = newChat.id;
+      skipNextChatLoadRef.current = true;
+      setCurrentChatId(newChat.id);
+      setChatListRefreshCounter((c) => c + 1);
+    }
     
     // Create user message
     const userMessage: Message = {
@@ -76,13 +88,13 @@ function AppContent() {
       let response;
       
       // If we have a current chat and are authenticated, save to history
-      if (currentChatId && isAuthenticated) {
+      if (ensuredChatId && isAuthenticated) {
         if (image) {
           // Upload image to chat
-          await uploadImage(currentChatId, image, content);
+          await uploadImage(ensuredChatId, image, content);
         } else {
           // Add text message to chat
-          await addMessage(currentChatId, 'user', content);
+          await addMessage(ensuredChatId, 'user', content);
         }
       }
       
@@ -107,9 +119,9 @@ function AppContent() {
       setMessages(prev => [...prev, assistantMessage]);
       
       // Save assistant response to chat history
-      if (currentChatId && isAuthenticated) {
+      if (ensuredChatId && isAuthenticated) {
         await addMessage(
-          currentChatId,
+          ensuredChatId,
           'assistant',
           response.response,
           response.egl_result ? JSON.stringify(response.egl_result) : undefined,
@@ -183,6 +195,7 @@ function AppContent() {
         onNewChat={handleNewChat}
         isCollapsed={sidebarCollapsed}
         onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+        refreshCounter={chatListRefreshCounter}
       />
       
       {/* Main content */}
