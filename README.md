@@ -54,6 +54,24 @@ graph TD
     end
 ```
 
+## 🏗️ Architecture & Diagrams
+
+### System Architecture (Dev)
+
+![GlucoGuide system architecture diagram](assets/diagrams/01-system-architecture.png)
+
+### End-to-End Dataflow (Dev)
+
+![GlucoGuide end-to-end dataflow diagram](assets/diagrams/02-dataflow.png)
+
+### Database Schema (SQLite)
+
+![GlucoGuide database schema diagram](assets/diagrams/03-database-schema.png)
+
+### eGL + Risk Score (Formula + Data Sources)
+
+![GlucoGuide eGL and risk score formula diagram](assets/diagrams/04-egl-risk-formula.png)
+
 ### Effective Glycemic Load (eGL) Calculation
 
 1. **Base GL** = (GI × Net Carbs) / 100
@@ -459,14 +477,14 @@ erDiagram
 ## 📚 Data Sources
 
 ### Glycemic Index Sources
-1. University of Sydney GI Database (glycemicindex.com)
-2. Harvard Health Publications
-3. American Diabetes Association
-4. Manual curation from research papers
+1. University of Sydney GI Database (via glycemicindex.com)
+2. Harvard Health Publications (used as an additional reference)
+3. Expandable CSV import pipeline (multi-source + confidence + source URLs)
+4. Seeded in-repo GI dataset used for offline lookups (can be expanded)
 
 ### Macronutrient Data Sources
-1. USDA FoodData Central (primary - comprehensive nutrition data)
-2. Manual database (80+ common foods with verified data)
+1. USDA FoodData Central (Foundation + SR Legacy; cached locally in SQLite)
+2. Seeded in-repo nutrition dataset for common foods (offline baseline)
 
 ## 🔧 Advanced Usage
 
