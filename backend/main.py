@@ -7,6 +7,7 @@ Now with user accounts, chat history, and personalized recommendations.
 """
 
 import os
+import json
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, UploadFile, File, HTTPException, Form, Depends
 from fastapi.middleware.cors import CORSMiddleware
@@ -72,7 +73,12 @@ app = FastAPI(
 # Configure CORS for frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000", "http://127.0.0.1:5173"],
+    allow_origins=[
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:5173",
+        "https://gluco-guide.pragnyalabs.com",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -89,9 +95,10 @@ app.include_router(usda_router)
 # Health Check
 # ============================================================================
 
-@app.get("/")
-async def root():
-    """Health check endpoint"""
+@app.get("/api")
+@app.get("/api/")
+async def api_root():
+    """API root / basic health"""
     return {
         "status": "healthy",
         "app": "GlucoGuide API",
@@ -101,7 +108,7 @@ async def root():
     }
 
 
-@app.get("/health")
+@app.get("/api/health")
 async def health_check():
     """Detailed health check"""
     return {
@@ -357,13 +364,12 @@ async def chat(request: ChatRequest):
     For persistent chat history, use /api/chats endpoints instead.
     """
     response = generate_chat_response(request.message)
-    
+
     return ChatResponse(
         response=response,
         food_analysis=None,
         egl_result=None
     )
-
 
 # ============================================================================
 # Error Handlers

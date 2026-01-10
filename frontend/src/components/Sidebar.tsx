@@ -9,7 +9,6 @@ import {
   Check, 
   X, 
   LogOut, 
-  Settings,
   ChevronLeft,
   ChevronRight,
   User
@@ -24,6 +23,7 @@ interface SidebarProps {
   onNewChat: () => void;
   isCollapsed: boolean;
   onToggleCollapse: () => void;
+  refreshCounter?: number;
 }
 
 export function Sidebar({ 
@@ -31,7 +31,8 @@ export function Sidebar({
   onSelectChat, 
   onNewChat,
   isCollapsed,
-  onToggleCollapse
+  onToggleCollapse,
+  refreshCounter = 0
 }: SidebarProps) {
   const { user, logout } = useAuth();
   const [chats, setChats] = useState<ChatSummary[]>([]);
@@ -42,7 +43,7 @@ export function Sidebar({
 
   useEffect(() => {
     loadChats();
-  }, []);
+  }, [refreshCounter]);
 
   const loadChats = async () => {
     setIsLoading(true);
@@ -67,8 +68,8 @@ export function Sidebar({
     try {
       const newChat = await createChat();
       setChats([newChat, ...chats]);
-      onSelectChat(newChat.id);
       onNewChat();
+      onSelectChat(newChat.id);
     } catch (err) {
       console.error('Failed to create chat:', err);
     }

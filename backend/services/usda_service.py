@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-USDA_API_KEY = os.getenv("USDA_API_KEY", "6iX9Wx9gJXL1QSzLhfdhIkGE4bDK3lfwWgvL50RS")
+USDA_API_KEY = os.getenv("USDA_API_KEY")
 USDA_BASE_URL = "https://api.nal.usda.gov/fdc/v1"
 
 # Nutrient IDs for the data we need
